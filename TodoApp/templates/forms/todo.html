@@ -1,39 +1,68 @@
 <article
   class="flex items-center justify-between py-3 hover:bg-gray-50 {% if todo.is_done %}bg-green-50{% endif %}"
 >
-  <div class="w-4/5">
-    <p
-      class="px-6 text-sm text-gray-900 cursor-pointer"
-      hx-get="/edit/{{ todo.id }}/"
-      hx-target="this"
-      hx-swap="outerHTML"
-    >
-      {{ todo.title }}
-    </p>
-  </div>
 
-  <div class="flex space-x-4 pr-4">
-    {% if not todo.is_done %}
-    <form
-      hx-put="/update/{{ todo.id }}/"
-      hx-target="closest article"
-      hx-swap="outerHTML"
-    >
-      <button class="text-green-600 hover:text-green-800 font-medium">
-        Done
-      </button>
-    </form>
-    {% endif %}
+{% if editing %}
 
-    <a
-      href="#"
-      class="text-red-500 hover:text-red-700 font-medium"
-      hx-confirm="Are you sure?"
-      hx-target="closest article"
-      hx-swap="delete"
-      hx-delete="/delete/{{ todo.id }}/"
-    >
-      Delete
-    </a>
-  </div>
+<form
+  hx-post="/edit/{{ todo.id }}/"
+  hx-target="closest article"
+  hx-swap="outerHTML"
+  class="flex items-center w-full px-6"
+>
+  <input
+    class="flex-1 mr-4 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+    type="text"
+    name="title"
+    value="{{ todo.title }}"
+    autofocus
+  />
+
+  <button class="text-green-600 hover:text-green-800 font-medium">
+    Done
+  </button>
+</form>
+
+{% else %}
+
+<div class="w-4/5">
+  <p
+    class="px-6 text-sm text-gray-900 cursor-pointer hover:text-cyan-600"
+    hx-get="/edit/{{ todo.id }}/"
+    hx-target="closest article"
+    hx-swap="outerHTML"
+  >
+    {{ todo.title }}
+  </p>
+</div>
+
+<div class="flex space-x-4 pr-4">
+
+  {% if not todo.is_done %}
+  <form
+    hx-put="/update/{{ todo.id }}/"
+    hx-target="closest article"
+    hx-swap="outerHTML"
+  >
+    <button class="text-green-600 hover:text-green-800 font-medium">
+      Done
+    </button>
+  </form>
+  {% endif %}
+
+  <a
+    href="#"
+    class="text-red-500 hover:text-red-700 font-medium"
+    hx-confirm="Are you sure?"
+    hx-target="closest article"
+    hx-swap="delete"
+    hx-delete="/delete/{{ todo.id }}/"
+  >
+    Delete
+  </a>
+
+</div>
+
+{% endif %}
+
 </article>
