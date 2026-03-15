@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>TodoApp</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.6.1"></script>
+
+    <!-- Alpine -->
+    <script
+      defer
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+  </head>
+
+  <body class="bg-sky-500 min-h-screen">
+    <nav
+      class="flex items-center justify-center px-4 py-6 bg-gradient-to-r from-cyan-500 to-sky-500"
+    >
+      <a href="/" class="text-3xl font-bold text-white">Todo App</a>
+    </nav>
+
+    <div class="flex justify-center mt-10">
+      <div class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6">
+        <form
+          class="flex mb-6 space-x-4"
+          hx-post="/add/"
+          hx-target="#todos"
+          hx-swap="beforeend"
+        >
+          <input
+            type="text"
+            name="title"
+            class="title flex-1 px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            placeholder="Add new task"
+          />
+
+          <button
+            class="px-5 py-3 rounded-lg text-white bg-cyan-500 hover:bg-cyan-600"
+          >
+            +
+          </button>
+        </form>
+
+        <div class="flex py-3 rounded-lg bg-gray-100 mb-2">
+          <div class="w-4/5">
+            <p class="px-6 text-xs font-semibold text-gray-500 uppercase">
+              Title
+            </p>
+          </div>
+
+          <div class="hidden md:block w-1/5 px-6 text-right">
+            <p class="text-xs font-semibold text-gray-500 uppercase">Actions</p>
+          </div>
+        </div>
+
+        <div class="divide-y divide-gray-200" id="todos">
+          {% for todo in todos %} {% include 'forms/todo.html' %} {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.body.addEventListener("htmx:configRequest", (event) => {
+        event.detail.headers["X-CSRFToken"] = "{{ csrf_token }}";
+      });
+
+      document.body.addEventListener("htmx:afterRequest", (event) => {
+        document.querySelector("input.title").value = "";
+      });
+    </script>
+  </body>
+</html>
